@@ -1,16 +1,14 @@
-FROM ubuntu:latest
+FROM arm64v8/node:18-alpine
+
+RUN apk update && apk add build-base gcc wget git make g++ python3
 
 WORKDIR /app
+COPY . .
 
-RUN apt update && apt upgrade -y && apt install -y git make gcc g++ python3 python3-pip curl
 
-RUN curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
-RUN chmod +x /tmp/nodesource_setup.sh
-RUN bash /tmp/nodesource_setup.sh
-RUN apt install nodejs
+RUN yarn install
+RUN yarn build
 
-COPY runner.sh runner.sh
+ENV NODE_ENV production
 
-RUN chmod +x runner.sh
-
-ENTRYPOINT ["/app/runner.sh"]
+CMD ["yarn", "start"]
