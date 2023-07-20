@@ -1,8 +1,11 @@
 import { Logger } from "@hammerhq/logger";
 import { bool, cleanEnv, str } from "envalid";
-import { execa } from "execa";
+import { exec } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
+import { promisify } from "node:util";
+
+const execAsync = promisify(exec);
 
 const env = cleanEnv(process.env, {
 	runner__GIT_USERNAME: str({
@@ -46,7 +49,7 @@ async function main() {
 	}:${env.runner__PERSONAL_ACCESS_TOKEN}@${env.runner__GIT_FQDN}/${
 		env.runner__GIT_REPO_OWNER_NAME
 	}/${env.runner__GIT_REPO_NAME}.git`;
-	await execa("git", ["clone", cloneURL, tempDir]).catch((err) => {
+	await execAsync(`git clone ${cloneURL} ${tempDir}`).catch((err) => {
 		logger.error("Failed to clone repo");
 		logger.error(err);
 
@@ -70,7 +73,7 @@ async function main() {
 	}
 
 	logger.event("Installing dependencies...");
-	await execa("npm", ["install"], {
+	await execAsync("npm install", {
 		cwd: tempDir,
 	}).catch((err) => {
 		logger.error("Failed to install dependencies");
@@ -82,7 +85,7 @@ async function main() {
 
 	if (repoPackageJSON.scripts?.build) {
 		logger.event("Building repo...");
-		await execa("npm", ["run", "build"], {
+		await execAsync("npm run build", {
 			cwd: tempDir,
 		}).catch((err) => {
 			logger.error("Failed to build repo");
@@ -94,7 +97,7 @@ async function main() {
 	}
 
 	logger.event("Starting repo...");
-	await execa("npm", ["run", "start"], {
+	await execAsync("npm run start", {
 		cwd: tempDir,
 	}).catch((err) => {
 		logger.error("Failed to start repo");
