@@ -26,12 +26,24 @@ const env = cleanEnv(process.env, {
 		default: true,
 		desc: "Whether or not to use HTTPS to connect to git server",
 	}),
+	runner_EXTRA_ALPINE_DEPS: str({
+		desc: "Extra Alpine packages to install",
+		default: "",
+	}),
 });
 
 const logger = new Logger("[RUNNER]:");
 
 async function main() {
 	logger.info("Starting runner...");
+
+	if (env.runner_EXTRA_ALPINE_DEPS !== "") {
+		logger.event("Installing extra Alpine packages...");
+		execSync(`apk add ${env.runner_EXTRA_ALPINE_DEPS}`, {
+			stdio: "inherit",
+		});
+		logger.success("Extra Alpine packages installed successfully!");
+	}
 
 	logger.event("Creating a temporary directory for repo...");
 
