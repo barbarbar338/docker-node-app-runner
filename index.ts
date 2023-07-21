@@ -53,7 +53,8 @@ async function main() {
 		!statSync(tempDir).isDirectory() ||
 		readdirSync(tempDir).length === 0
 	) {
-		mkdirSync(tempDir);
+		if (!existsSync(tempDir)) mkdirSync(tempDir);
+
 		logger.success(`Created temporary directory ${tempDir}`);
 
 		logger.event(
