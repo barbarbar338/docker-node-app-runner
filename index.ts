@@ -1,7 +1,7 @@
 import { Logger } from "@hammerhq/logger";
 import { bool, cleanEnv, str } from "envalid";
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 
 const env = cleanEnv(process.env, {
@@ -36,7 +36,11 @@ async function main() {
 	logger.event("Creating a temporary directory for repo...");
 
 	const tempDir = resolve(__dirname, "repo_temp");
-	if (!existsSync(tempDir)) {
+	if (
+		!existsSync(tempDir) ||
+		!statSync(tempDir).isDirectory() ||
+		readdirSync(tempDir).length === 0
+	) {
 		mkdirSync(tempDir);
 		logger.success(`Created temporary directory ${tempDir}`);
 
