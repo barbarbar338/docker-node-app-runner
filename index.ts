@@ -1,11 +1,8 @@
 import { Logger } from "@hammerhq/logger";
 import { bool, cleanEnv, str } from "envalid";
-import { exec } from "node:child_process";
+import { execSync } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { promisify } from "node:util";
-
-const execAsync = promisify(exec);
 
 const env = cleanEnv(process.env, {
 	runner__GIT_USERNAME: str({
@@ -51,12 +48,11 @@ async function main() {
 		}:${env.runner__PERSONAL_ACCESS_TOKEN}@${env.runner__GIT_FQDN}/${
 			env.runner__GIT_REPO_OWNER_NAME
 		}/${env.runner__GIT_REPO_NAME}.git`;
-		await execAsync(`git clone ${cloneURL} ${tempDir}`).catch((err) => {
-			logger.error("Failed to clone repo");
-			logger.error(err);
 
-			process.exit(1);
+		execSync(`git clone ${cloneURL} ${tempDir}`, {
+			stdio: "inherit",
 		});
+
 		logger.success("Repo cloned successfully!");
 
 		const repoPackageJSON = require(resolve(tempDir, "package.json"));
@@ -75,38 +71,26 @@ async function main() {
 		}
 
 		logger.event("Installing dependencies...");
-		await execAsync("npm install", {
+		execSync("npm install", {
 			cwd: tempDir,
-		}).catch((err) => {
-			logger.error("Failed to install dependencies");
-			logger.error(err);
-
-			process.exit(1);
+			stdio: "inherit",
 		});
 		logger.success("Dependencies installed successfully!");
 
 		if (repoPackageJSON.scripts?.build) {
 			logger.event("Building repo...");
-			await execAsync("npm run build", {
+			execSync("npm run build", {
 				cwd: tempDir,
-			}).catch((err) => {
-				logger.error("Failed to build repo");
-				logger.error(err);
-
-				process.exit(1);
+				stdio: "inherit",
 			});
 			logger.success("Repo built successfully!");
 		}
 	}
 
 	logger.event("Starting repo...");
-	await execAsync("npm run start", {
+	execSync("npm run start", {
 		cwd: tempDir,
-	}).catch((err) => {
-		logger.error("Failed to start repo");
-		logger.error(err);
-
-		process.exit(1);
+		stdio: "inherit",
 	});
 
 	logger.info("Runner finished!");
