@@ -88,7 +88,7 @@ async function main() {
 		}
 
 		logger.event("Installing dependencies...");
-		execSync("npm install", {
+		execSync("yarn", {
 			cwd: tempDir,
 			stdio: "inherit",
 		});
@@ -96,7 +96,7 @@ async function main() {
 
 		if (repoPackageJSON.scripts?.build) {
 			logger.event("Building repo...");
-			execSync("npm run build", {
+			execSync("yarn build", {
 				cwd: tempDir,
 				stdio: "inherit",
 			});
@@ -105,7 +105,7 @@ async function main() {
 	}
 
 	logger.event("Starting repo...");
-	execSync("npm run start", {
+	execSync("yarn start", {
 		cwd: tempDir,
 		stdio: "inherit",
 	});
