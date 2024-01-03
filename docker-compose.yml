@@ -1,8 +1,8 @@
-verison: "3.8"
+version: "3.8"
 name: docker-node-app-runner
 
 services:
-  docker-node-app-runner":
+  docker-node-app-runner:
     image: barbarbar338/docker-node-app-runner:buildx-latest
     container_name: docker-node-app-runner
     restart: unless-stopped
