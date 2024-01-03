@@ -1,11 +1,27 @@
-FROM arm64v8/node:18-alpine
+FROM node:18-alpine
 
-RUN apk update && apk add build-base gcc wget git make g++ python3
+USER root
 
+# Install dependencies
+RUN apk update && apk add --no-cache build-base gcc wget git make g++ python3
+
+# Create runner user
+RUN adduser --shell $(which bash) --disabled-password runner
+
+# Set working directory
+RUN mkdir /app
+RUN chown -R runner /app
+
+# Set user
+USER runner
+
+# Set working directory
 WORKDIR /app
-COPY . .
 
-RUN yarn install
-RUN yarn build
+# Copy runner.sh
+COPY --chown=runner:runner ./runner.sh /app/runner.sh
+RUN chmod +x /app/runner.sh
 
-CMD ["yarn", "start"]
+# Start runner
+ENTRYPOINT ["/app/runner.sh"]
+
