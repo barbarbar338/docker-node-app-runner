@@ -6,7 +6,7 @@ services:
     environment:
       # These environment variables are required.
       - runner__GIT_USERNAME=
-      - runner__PERSONAL_ACCESS_TOKEN=
+      - runner__GIT_PERSONAL_ACCESS_TOKEN=
       - runner__GIT_FQDN=
       - runner__GIT_REPO_NAME=
       - runner__GIT_REPO_OWNER=
