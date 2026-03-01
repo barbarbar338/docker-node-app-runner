@@ -2,26 +2,23 @@ FROM node:24-alpine
 
 USER root
 
-# Install dependencies
+# Install build deps
 RUN apk update && apk add --no-cache build-base gcc wget git make g++ python3 which
 
-# Create runner user
-RUN adduser -s $(which bash) -S -D app
+# Create non-root user
+RUN adduser -s /bin/sh -S -D app
 
-# Set working directory
-RUN mkdir /app
-RUN chown -R app /app
+# Setup /app
+RUN mkdir /app && chown -R app:app /app
 
-# Set user
 USER app
-
-# Set working directory
 WORKDIR /app
 
-# Copy runner.sh
+# Copy and prepare script
 COPY --chown=app:app runner.sh /app/runner.sh
 RUN chmod +x /app/runner.sh
 
-# Start runner
-ENTRYPOINT ["/app/runner.sh"]
+# fix any potential CRLF
+RUN sed -i 's/\r$//' /app/runner.sh
 
+ENTRYPOINT ["/app/runner.sh"]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # Check environment variables
 username=$runner__GIT_USERNAME
