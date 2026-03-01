@@ -1,11 +1,8 @@
-version: "3.8"
-name: docker-node-app-runner
-
 services:
   docker-node-app-runner:
-    image: barbarbar338/docker-node-app-runner:buildx-latest
-    container_name: docker-node-app-runner
+    image: barbarbar338/docker-node-app-runner:latest
     restart: unless-stopped
+    pull_policy: always
     environment:
       # These environment variables are required.
       - runner__GIT_USERNAME=
@@ -14,9 +11,11 @@ services:
       - runner__GIT_REPO_NAME=
       - runner__GIT_REPO_OWNER=
       - runner__GIT_SERVER_SECURE=
+
       # If your app depends on extra dependencies then add them here
       - runner__EXTRA_ALPINE_DEPENDENCIES=
-      # And your normal environment variables goes here
+
+      # And your app's environment variables goes here
       - PORT=3000
       - NODE_ENV=production
       # ...
