@@ -1,6 +1,6 @@
 services:
   docker-node-app-runner:
-    image: barbarbar338/docker-node-app-runner:latest
+    image: barbarbar338/docker-node-app-runner:latest # or specific version. Please check the image registry for available options
     restart: unless-stopped
     pull_policy: always
     environment:
